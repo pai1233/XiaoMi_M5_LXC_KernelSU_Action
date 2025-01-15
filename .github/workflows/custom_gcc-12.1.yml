@@ -85,8 +85,14 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
         git clone ${{ env.KERNEL_SOURCE }} -b ${{ env.KERNEL_SOURCE_BRANCH }} android-kernel --depth=1
-
-        
+        if [ -f $GITHUB_WORKSPACE/kernel_workspace/android-kernel/arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} ];then
+            echo "kernel configure file is ready"
+        else
+            touch ./android-kernel/arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
+            cat ./android-kernel/arch/${{ env.ARCH }}/configs/vendor/xiaomi/mi8996_defconfig ./android-kernel/arch/${{ env.ARCH }}/configs/vendor/xiaomi/gemini.conf > $GITHUB_WORKSPACE/kernel_workspace/android-kernel/arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
+            echo "kernel configure file is ready"
+        fi
+ 
 
     - name: Download source boot image
       if: env.BUILD_BOOT_IMG == 'true'
