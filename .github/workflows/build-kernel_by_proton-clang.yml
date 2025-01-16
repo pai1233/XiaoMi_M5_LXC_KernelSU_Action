@@ -186,7 +186,6 @@ jobs:
         fi
        
     - name: Setup ccache
-      if: env.ENABLE_CCACHE == 'true'
       uses: hendrikmuhs/ccache-action@v1.2
       with:
         key: build-kernel-${{ env.DEVICE }}${{ env.UPLOADNAME }}
@@ -248,7 +247,7 @@ jobs:
         ./magiskboot unpack boot-source.img
         cp android-kernel/out/arch/${{ env.ARCH }}/boot/${{ env.KERNEL_IMAGE_NAME }} ./kernel
         ./magiskboot repack boot-source.img
-        if [ -f new-boot.img ]; then
+        if [ -f ./new-boot.img ]; then
             echo "MAKE_BOOT_IMAGE_IS_OK=true" >> $GITHUB_ENV
         else
             echo "Boot image is empty"
