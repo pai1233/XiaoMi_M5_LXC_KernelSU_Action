@@ -96,6 +96,14 @@ jobs:
         cd $GITHUB_WORKSPACE/kernel_workspace
         git clone ${{ env.KERNEL_SOURCE }} -b ${{ env.KERNEL_SOURCE_BRANCH }} android-kernel --depth=1
 
+        if [ -f $GITHUB_WORKSPACE/kernel_workspace/android-kernel/arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} ];then
+            echo "kernel configure file is ready"
+        else
+            touch ./android-kernel/arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
+            cat ./android-kernel/arch/${{ env.ARCH }}/configs/vendor/xiaomi/mi8996_defconfig ./android-kernel/arch/${{ env.ARCH }}/configs/vendor/xiaomi/gemini.config > $GITHUB_WORKSPACE/kernel_workspace/android-kernel/arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
+            echo "kernel configure file is ready"
+        fi
+
     - name: Download source boot image
       if: env.BUILD_BOOT_IMG == 'true'
       run: |
@@ -110,7 +118,7 @@ jobs:
       if: env.ENABLE_KERNELSU == 'true'
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s ${{ env.KERNELSU_TAG }}
+        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v0.9.5
         echo "UPLOADNAME=-KernelSU" >> $GITHUB_ENV
 
     - name: Setup Configuration for Kernel
